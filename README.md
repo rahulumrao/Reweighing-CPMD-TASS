@@ -51,9 +51,9 @@ make clean     : remove object and mod files
 make distclean : clean the directory
 ```
 
-```shell
+```bash
 How to Run -->
-echo "-------------"
+"-------------"
 Two bash script is given along with the program (run_pmf.sh & run_prob.sh) 
 Create execute permission
 chmod 755 run_pmf.sh
