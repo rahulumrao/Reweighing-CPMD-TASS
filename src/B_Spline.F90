@@ -8,26 +8,26 @@ SUBROUTINE bspline(nr,gridmin,gridmax,pcons,fes)
 
     IMPLICIT NONE
 
-    integer(ip) :: nx    !! number of points in x
-    integer(ip) :: nxv   !! number of points to evaluate interpolant
-    integer(ip),parameter :: kx    = 4    !! order in x
-    integer(ip),parameter :: iknot = 0    !! automatically select the knots
+    INTEGER(ip)                 :: nx           !! number of points in x
+    INTEGER(ip)                 :: nxv          !! number of points to evaluate interpolant
+    INTEGER(ip),PARAMETER       :: kx    = 4    !! order in x
+    INTEGER(ip),PARAMETER       :: iknot = 0    !! automatically select the knots
 
-    real(wp),ALLOCATABLE :: x(:),f1(:),fval(:)
-    real(wp),ALLOCATABLE :: xval(:)
-    real(wp),ALLOCATABLE :: tx(:)
-    real(wp) :: val,tru,err,errmax,gridmin(*),gridmax(*)
-    integer(ip) :: i,j,idx,iflag,inbvx,iloy
-    logical :: extrap
+    INTEGER                     :: istat  !! pyplot-fortran status flag
+    INTEGER(ip)                 :: i,j,idx,iflag,inbvx,iloy
+    INTEGER                     :: n,nr,ios
+    REAL(wp),ALLOCATABLE        :: x(:),f1(:),fval(:)
+    REAL(wp),ALLOCATABLE        :: xval(:)
+    REAL(wp),ALLOCATABLE        :: tx(:)
+    REAL(wp)                    :: val,tru,err,errmax,gridmin(*),gridmax(*)
+    REAL(wp),DIMENSION(3*kx)    :: w1_1d !! work array
+    LOGICAL                     :: extrap
 !    type(pyplot) :: plt
-    integer :: istat  !! pyplot-fortran status flag
-    real(wp),dimension(3*kx) :: w1_1d !! work array
-    INTEGER :: n,nr,ios
-    REAL*8  :: pcons(*),fes(*)
-    REAL*8 :: dummy,dummy1,nb
+    REAL*8                      :: pcons(*),fes(*)
+    REAL*8                      :: dummy,dummy1,nb
 
     idx = 0
-    nx = nr ; nxv = 15*(nr)
+    nx = nr ; nxv = 10*(nr)
     ALLOCATE(x(nx))
     ALLOCATE(xval(nxv))
     ALLOCATE(tx(nx+kx))
@@ -49,11 +49,11 @@ SUBROUTINE bspline(nr,gridmin,gridmax,pcons,fes)
     inbvx = 1
     iloy  = 1
     ! initialize
-    call db1ink(x,nx,f1,kx,iknot,tx,f1,iflag)
+    CALL db1ink(x,nx,f1,kx,iknot,tx,f1,iflag)
 
-    if (iflag/=0) then
-        write(*,*) 'Error initializing 1D spline: '//get_status_message(iflag)
-    end if
+    IF (iflag/=0) THEN
+        WRITE(*,*) 'Error initializing 1D spline: '//get_status_message(iflag)
+    END IF
 
     !initialize the plot:
 !    call plt%initialize(grid=.true.,xlabel='x (deg)',ylabel='f(x)',&
@@ -63,17 +63,17 @@ SUBROUTINE bspline(nr,gridmin,gridmax,pcons,fes)
 
         OPEN(21,FILE='interp_free_energy.out')
         errmax = 0.0_wp
-        do i=1,nxv
+        DO i=1,nxv
             call db1val(xval(i),idx,tx,nx,kx,f1,val,iflag,inbvx,w1_1d,extrap=extrap)
 !            write(*,*) xval(i), val
             IF (xval(i) .lt. pcons(1)) val = 0.0
             fval(i) = val  ! save it for plot
             WRITE(21,*)xval(i), val
-        end do
+        END DO
 
-        write(*,*) ''
-        write(*,*) 'interpolated free energy written in : interp_free_energy.dat'
-        write(*,*) ''
+        WRITE(*,*) ''
+        WRITE(*,*) 'interpolated free energy written in : interp_free_energy.dat'
+        WRITE(*,*) ''
 
 !        if (extrap) then
 !            call plt%add_plot(xval,fval,&

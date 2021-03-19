@@ -39,13 +39,10 @@ REAL*8, PARAMETER :: kb = 1.9872041E-3 !kcal K-1 mol-1
 REAL*8, PARAMETER :: au_to_kcal = 627.51 
 REAL*8, PARAMETER :: kj_to_kcal = 0.239006 
 
-OPEN(11,FILE='cvmdck_mtd',STATUS='unknown')
-OPEN(14,FILE='cv.dat',STATUS='unknown')
-!
-CALL get_steps(11,md_steps)
 !
 kt0         = 300.D0   ; kt         = 300.D0
-t_min       = 1        ; t_max      = md_steps
+t_min       = 1        ; t_max      = 7000
+w_hill      = 0        ; w_cv       = 0
 pmf         = .FALSE.  ; inpgrid    = .FALSE.
 read_ct     = .FALSE.  ; read_vbias = .FALSE.
 probT       = .FALSE.  ; spline     = .FALSE.
@@ -130,6 +127,12 @@ ENDDO
         read_vbias=.TRUE.
   END IF
 END DO
+IF (probT) THEN
+OPEN(11,FILE='cvmdck_mtd',STATUS='unknown')
+OPEN(14,FILE='cv.dat',STATUS='unknown')
+CALL get_steps(11,md_steps)
+t_max = md_steps
+ENDIF
 IF (mtd .eq. 'y') THEN
 OPEN(12,FILE='parvar_mtd',STATUS='unknown')
 OPEN(13,FILE='colvar_mtd',STATUS='unknown')
@@ -208,7 +211,7 @@ WRITE(*,'(A85)')'===============================================================
 t(1:j) = t_cv(1:j) !; PRINT*,t(1:j)    !# t_cv TASS CV INDEX
 n1 = nbin(1) ;n2 = nbin(2) ;n3 = nbin(3) ;n4 = nbin(4) 
 IF (pmf) THEN
-  CALL mean_force(ncv,nr,kt,gridmin,gridmax,griddif,nbin,t_min,t_max,pcons,fes)
+  CALL mean_force(u,ncv,nr,kt,gridmin,gridmax,griddif,nbin,t_min,t_max,pcons,fes)
   IF(spline) CALL bspline(nr,gridmin,gridmax,pcons,fes)
 STOP
 ELSE

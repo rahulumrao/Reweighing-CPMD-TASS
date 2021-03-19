@@ -1,10 +1,40 @@
-# Reweighing-CPMD-TASS
+
+#----------------------------------------------------------------------------------------------
+#				 Reweighing-CPMD-TASS
+#----------------------------------------------------------------------------------------------
 # Temperatture Accelarated Sliced Sampling (TASS) method combines
 # temperature accelerated molecular dynamics with umbrella sampling and
 # metadynamics to sample the collective variable space in an efficient manner.
-# "Exploring high dimensional free energy landscapes: Temperature accelerated sliced sampling
+# [Ref: "Exploring high dimensional free energy landscapes: Temperature accelerated sliced sampling
 # J. Chem. Phys. 146, 094108 (2017); https://doi.org/10.1063/1.4977704"
 # "Awasthi, S, Nair, NN. Exploring high‐dimensional free energy landscapes of chemical reactions.
-# WIREs Comput Mol Sci. 2019; 9:e1398. https://doi.org/10.1002/wcms.1398"
-# This Modular Fortran program reweighing TASS output generated from CPMD code
-# It reweigh free energy using WHAM method also via. mean force method
+# WIREs Comput Mol Sci. 2019; 9:e1398. https://doi.org/10.1002/wcms.1398" ]
+#
+# This Modular Fortran program unbias the Probability of TASS output generated in CPMD run
+# which can be used to compute multidimensional (1D/2D/3D) free energy via WHAM reweighing
+# It can also directly generate 1D free enrgy using Mean Force method
+# Basis Spline interpolation can be performed to find intermediate points in free energy
+# [Ref : https://github.com/jacobwilliams/bspline-fortran]
+
+# Modular Code Written by :- Rahul Verma
+#----------------------------------------------------------------------------------------------
+
+
+#!/bin/bash
+bin/Probability_analysis.x 	 	# executable
+-T0 300                 		# Physical system Temperature
+-T 1000                 		# CV Temperature
+-bias_fact 1500         		# Metadynamics Bias Factor
+-tmin 5000              		# Minimum MD steps to compute Probability
+-ncv 5                  		# Total CV's in TASS Simulation
+-UCV 1                  		# Umbrella CV index
+-MTD n                  		# y/n IF Metadynamics performed durung simulation
+-MCV 0                  		# IF MTD=y then Metadynamics CV index [else=0]
+-tool pmf		 		# pmf/probT [pmf-->compute potential of mean force ; probT --> Unbias Probability]
+-interpolate		 		# Basis Spline 1D interpolation if one wants to do for pmf free energy
+-nr 14			 		# Number of replica (total umbrella window during simulation)
+-Prob_nD				# Dimension of Probabilty to be generated [1/2/3]
+-CV_num					# Probabilty generated along CV indicis [1 --> 1D ; 1 2 --> for 2D along CV1 and CV2 etc..]
+-pfrqMD 1				# Frequency of update in cvmdck_mtd file during run
+-dtMTD					# Frequency of Hill Update during Metadynamics
+-grid 1.5 4.5 0.02 1.0 10.0 0.02 1.0 9.0 0.02 3.0 5.0 0.02 1.0 6.0 0.05 ,\ # gridmin gridmax griddif for every CV

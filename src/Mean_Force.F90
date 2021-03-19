@@ -1,25 +1,33 @@
+!--------------------------------------------------------------------------------
+! THIS SUBROUTINE COMPUTE'S MEAN FORCE AT EACH UMBRELLA WINDOW AND THEN 
+! INTEGRATE THAT MEAN FORCE TO CALCULATE FREE ENERGY (1D) ALONG UMBRELLA CV
+! u --> UMBRELLA CV INDEX ; nr --> NUMBER OF UMBRELLA WINDOWS
+! pcons --> POSITION OF UMBRELL ; kcons --> Kappa VALUE IN EACH UMBRELLA WINDOW
+! dfds = delF/delS ; fes --> FREE ENERGY ALONG UMBRELLA CV
+! WRITTEN BY : Rahul Verma
+!--------------------------------------------------------------------------------
 MODULE MeanForce
 USE GetSteps
 CONTAINS
-SUBROUTINE mean_force(ncv,nr,kt,gridmin,gridmax,griddif,nbin,t_min,t_max,pcons,fes)
+SUBROUTINE mean_force(u,ncv,nr,kt,gridmin,gridmax,griddif,nbin,t_min,t_max,pcons,fes)
 IMPLICIT NONE
-INTEGER :: i,j,i_md,dummy1,n,t_min,t_max,i_s1,i_s2,ir,nr,ios,narg
-INTEGER :: ncv,w_cv,w_hill,md_steps,mtd_steps,indx1
-INTEGER :: indx,nbin(*)
-REAL*8  :: diff_s,den,num,kt,dum
-REAL*8  :: gridmin(*),gridmax(*),griddif(*)
-REAL*8,ALLOCATABLE :: cv(:,:,:),dummy(:,:,:),ct(:,:),prob(:)
-REAL*8,ALLOCATABLE :: dfds(:,:),av_dfds(:),pcons(:),kcons(:),norm(:),fes(:)
+INTEGER                 :: i,j,i_md,dummy1,n,t_min,t_max,i_s1,i_s2,ir,nr,ios,narg
+INTEGER                 :: ncv,w_cv,w_hill,md_steps,mtd_steps,indx1
+INTEGER                 :: indx,nbin(*),u
+REAL*8                  :: diff_s,den,num,kt,dum
+REAL*8                  :: gridmin(*),gridmax(*),griddif(*)
+REAL*8,ALLOCATABLE      :: cv(:,:,:),dummy(:,:,:),ct(:,:),prob(:)
+REAL*8,ALLOCATABLE      :: dfds(:,:),av_dfds(:),pcons(:),kcons(:),norm(:),fes(:)
+REAL*8, PARAMETER       :: kb=1.9872041E-3 !kcal K-1 mol-1
+REAL*8, PARAMETER       :: au_to_kcal = 627.51
+REAL*8, PARAMETER       :: kj_to_kcal = 0.239006
 
-CHARACTER(LEN=50) :: filename_loc
+LOGICAL                 :: pmf,inpgrid,read_ct, read_vbias
+CHARACTER(LEN=50)       :: filename_loc
 CHARACTER(LEN=50),ALLOCATABLE :: filename(:),filename_mtd(:)
-LOGICAL :: pmf,inpgrid,read_ct, read_vbias
 
-REAL*8, PARAMETER :: kb=1.9872041E-3 !kcal K-1 mol-1
-REAL*8, PARAMETER :: au_to_kcal = 627.51
-REAL*8, PARAMETER :: kj_to_kcal = 0.239006
 kt = kb*kt
-IF(nbin(1) .eq. 0 ) STOP "ERROR : number of bins can not be zero"
+IF(nbin(1) .eq. 0 ) STOP "ERROR : NUMBER OF BINS CAN NOT BE ZERO"
 
 ALLOCATE(pcons(nr))
 ALLOCATE(kcons(nr))
@@ -43,6 +51,7 @@ write(*,101)'#replica','umbrella_mean','umbrella_k(kcal/mol)','CV_VAL_file',"MD 
 ALLOCATE(dfds(nr,9999999))
 ALLOCATE(cv(nr,ncv,9999999))
 ALLOCATE(av_dfds(nr))
+
 DO i = 1,nr
 OPEN(11,FILE=filename(i),status='old')
 IF (t_max .eq. 0) t_max=t_min
@@ -54,7 +63,7 @@ ALLOCATE(dummy(nr,ncv,md_steps))
 DO i_md=1,md_steps
      READ(11,*)dummy1,dummy1,(dummy(i,j,i_md),j=1,ncv),(cv(i,j,i_md),j=1,ncv)
 !     WRITE(*,*)dummy1,dummy1,(dummy(i,j,i_md),j=1,ncv),(cv(i,j,i_md),j=1,ncv)
-     diff_s = cv(i,1,i_md) - pcons(i)
+     diff_s = cv(i,u,i_md) - pcons(i)
      dfds(i,i_md) = -diff_s*kcons(i)
 ENDDO
 den = 0.d0 ; num = 0.d0 ; dum = 0.d0
