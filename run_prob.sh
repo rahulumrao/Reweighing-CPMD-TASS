@@ -1,5 +1,5 @@
 #!/bin/bash
-cd cv_file/umb_2.2/
+cd test/cv_file/umb_2.2/
   ../../bin/Probability_analysis.x ,\
  -T0 300                 ,\
  -T 1000                 ,\
@@ -10,8 +10,8 @@ cd cv_file/umb_2.2/
  -MTD n                  ,\
  -MCV 0                  ,\
  -tool probT		 ,\
- -Prob_nD 1              ,\
- -CV_num 1               ,\
+ -Prob_nD 2              ,\
+ -CV_num 1 2               ,\
  -grid 1.0 5.0 0.02 1.0 10.0 0.02 1.0 9.0 0.02 3.0 5.0 0.02 1.0 6.0 0.05 ,\
  -pfrqMD 1 ,\
  -dtMTD 200
