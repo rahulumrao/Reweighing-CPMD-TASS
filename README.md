@@ -51,11 +51,11 @@ make clean     : remove object and mod files
 make distclean : clean the directory
 ```
 
-```html
+```shell
 How to Run -->
 "-------------"
-Two bash script is given along with the program (run_pmf.sh & run_prob.sh) 
-Create execute permission
+#Two bash script is given along with the program (run_pmf.sh & run_prob.sh) 
+#Create execute permission
 chmod 755 run_pmf.sh
 chomd 755 run_prob.sh
 To compute Free Energy using Mean Force method use run_pmf.sh
