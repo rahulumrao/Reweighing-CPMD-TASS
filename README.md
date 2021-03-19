@@ -51,7 +51,7 @@ make clean     : remove object and mod files
 make distclean : clean the directory
 ```
 
-```zsh
+```html
 How to Run -->
 "-------------"
 Two bash script is given along with the program (run_pmf.sh & run_prob.sh) 
