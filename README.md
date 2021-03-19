@@ -58,9 +58,9 @@ Two bash script is given along with the program (run_pmf.sh & run_prob.sh)
 Create execute permission by following command :
 chmod 755 run_pmf.sh
 chomd 755 run_prob.sh
-To compute Free Energy using Mean Force method use run_pmf.sh
+To compute Free Energy using Mean Force method :: run_pmf.sh
 ./run_pmf.sh
-To compute multidimensional probabilities use run_prob.sh
+To compute multidimensional probabilities :: run_prob.sh
 ./run_prob.sh
 ```
 
