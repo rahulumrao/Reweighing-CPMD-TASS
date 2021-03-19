@@ -20,7 +20,7 @@
 #----------------------------------------------------------------------------------------------
 ```
 
-
+```bash
 #!/bin/bash
 bin/Probability_analysis.x 	 	# executable
 -T0 300                 		# Physical system Temperature
@@ -39,7 +39,7 @@ bin/Probability_analysis.x 	 	# executable
 -pfrqMD 1				# Frequency of update in cvmdck_mtd file during run
 -dtMTD					# Frequency of Hill Update during Metadynamics
 -grid 1.5 4.5 0.02 1.0 10.0 0.02 1.0 9.0 0.02 3.0 5.0 0.02 1.0 6.0 0.05 ,\ # gridmin gridmax griddif for every CV
-
+```
 
 INSTALL :
 Modify Makefile to change the compiler [if needed]
