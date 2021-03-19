@@ -4,9 +4,9 @@ Reweighing-CPMD-TASS
 
 Temperatture Accelarated Sliced Sampling (TASS) method combines the temperature accelerated molecular dynamics with umbrella sampling and
 metadynamics to sample the collective variable space in an efficient manner.
-[Ref: Exploring high dimensional free energy landscapes: Temperature accelerated sliced sampling J. Chem. Phys. 146, 094108 (2017)
+[Ref: Exploring high dimensional free energy landscapes: Temperature accelerated sliced sampling J. Chem. Phys. 146, 094108 (2017).
 [![DOI] https://doi.org/10.1063/1.4977704
-Awasthi, S, Nair, NN. Exploring high‐dimensional free energy landscapes of chemical reactions. WIREs Comput Mol Sci. 2019
+Awasthi, S, Nair, NN. Exploring high‐dimensional free energy landscapes of chemical reactions. WIREs Comput Mol Sci. 2019.
 [![DOI]  https://doi.org/10.1002/wcms.1398 ]
 
 This Modular Fortran program unbias the Probability of TASS output generated in CPMD run, which can be used to compute multidimensional (1D/2D/3D) free energy via WHAM reweighing. It can also directly generate 1D free enrgy using Mean Force method (PMF).Basis Spline interpolation can be performed to find intermediate points in free energy
