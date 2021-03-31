@@ -14,7 +14,7 @@ This Modular Fortran program unbias the Probability of TASS output generated in 
 Basis Spline interpolation can be performed to find intermediate points in free energy .\
 [Ref : https://github.com/jacobwilliams/bspline-fortran]
 
-# Modular Code Written by :- Rahul Verma
+!# Modular Code Written by :- Rahul Verma
 #---------------------------------------------------------------------------------------------------------------------------------------------
 ```
 
@@ -62,7 +62,7 @@ To compute multidimensional probabilities :: run_prob.sh
 ./run_prob.sh
 ```
 
-#AUTHOUR
+# AUTHOUR
 
 RAHUL VERMA \
 DEPARTMENT OF CHEMISTRY \
