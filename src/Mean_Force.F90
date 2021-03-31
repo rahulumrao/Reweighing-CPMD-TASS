@@ -9,7 +9,7 @@
 MODULE MeanForce
 USE GetSteps
 CONTAINS
-SUBROUTINE mean_force(u,ncv,nr,kt,gridmin,gridmax,griddif,nbin,t_min,t_max,pcons,fes)
+SUBROUTINE mean_force(max_step,u,ncv,nr,kt,gridmin,gridmax,griddif,nbin,t_min,t_max,pcons,fes)
 IMPLICIT NONE
 INTEGER                 :: i,j,i_md,dummy1,n,t_min,t_max,i_s1,i_s2,ir,nr,ios,narg
 INTEGER                 :: ncv,w_cv,w_hill,md_steps,mtd_steps,indx1
@@ -22,7 +22,7 @@ REAL*8, PARAMETER       :: kb=1.9872041E-3 !kcal K-1 mol-1
 REAL*8, PARAMETER       :: au_to_kcal = 627.51
 REAL*8, PARAMETER       :: kj_to_kcal = 0.239006
 
-LOGICAL                 :: pmf,inpgrid,read_ct, read_vbias
+LOGICAL                 :: pmf,inpgrid,read_ct,read_vbias,max_step
 CHARACTER(LEN=50)       :: filename_loc
 CHARACTER(LEN=50),ALLOCATABLE :: filename(:),filename_mtd(:)
 
@@ -54,9 +54,12 @@ ALLOCATE(av_dfds(nr))
 
 DO i = 1,nr
 OPEN(11,FILE=filename(i),status='old')
-IF (t_max .eq. 0) t_max=t_min
 CALL get_steps(11,md_steps)
-t_max=md_steps
+IF (max_step) THEN
+  t_max = t_max
+ELSE
+  t_max = md_steps
+ENDIF
 WRITE(*,102)i, pcons(i), kcons(i), filename(i),md_steps,t_min,t_max
 ALLOCATE(dummy(nr,ncv,md_steps))
 
@@ -108,7 +111,7 @@ ALLOCATE(norm(nr))
 OPEN(13,FILE="free_energy.dat")
 ALLOCATE(fes(nr))
 fes(1) = 0.d0 ; num = 0.d0
-
+!Integration using TrapeZoidal Rule 
 DO i = 1,nr-1
    dum = pcons(i+1) - pcons(i)
    num = num + dum*(av_dfds(i+1) + av_dfds(i))

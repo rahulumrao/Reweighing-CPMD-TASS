@@ -32,7 +32,7 @@ INTEGER,ALLOCATABLE :: nbin(:),indx(:),t(:),t_cv(:)
 INTEGER :: md_steps,mtd_steps,dummy1,i,j,index1,k,t_min,t_max,i_s1,i_s2,narg
 INTEGER :: i_md,i_mtd,ncv,w_hill,w_cv,n1,n2,n3,n4,prob_nD,cv_mtd,cv_us,cv_num(3)
 INTEGER :: ii,jj,kk,l,u,m,nr
-LOGICAL :: pmf,probT,spline,inpgrid,read_ct,read_vbias
+LOGICAL :: pmf,probT,spline,inpgrid,read_ct,read_vbias,max_step
 CHARACTER*5 :: mtd,tool
 CHARACTER*120 :: arg 
 REAL*8, PARAMETER :: kb = 1.9872041E-3 !kcal K-1 mol-1
@@ -47,6 +47,7 @@ pmf         = .FALSE.  ; inpgrid    = .FALSE.
 read_ct     = .FALSE.  ; read_vbias = .FALSE.
 probT       = .FALSE.  ; spline     = .FALSE.
 narg        = IARGC()  ; bias_fact  = 1500.D0 
+max_step = .FALSE.
 
 DO i=1,narg
   CALL GETARG(i,arg)
@@ -65,7 +66,8 @@ DO i=1,narg
   ELSE IF(INDEX(arg,'-tmax').NE.0)THEN
      CALL GETARG(i+1,arg)
      READ(arg,*)t_max
-     IF(t_max.gt.md_steps)STOP '!!ERROR: t_max > total MD steps'
+     max_step = .TRUE.
+!     IF(t_max.gt.md_steps)STOP '!!ERROR: t_max > total MD steps'
    ELSEIF(INDEX(arg, '-ncv') .NE. 0)THEN
      CALL GETARG(i+1,arg)
      READ(arg,*)ncv
@@ -186,13 +188,14 @@ ALLOCATE(nbin(ncv))        ; ALLOCATE(vbias(md_steps))
 ALLOCATE(ct(mtd_steps))    ; ALLOCATE(t(ncv))
 ALLOCATE(t_cv(ncv))
 !-----------------------------------------------------------------------------------------------------!
-
+IF (probT) THEN
 101 FORMAT (I5,10F16.6)
 DO i_md=1,md_steps
    READ(11,*)dummy1,dummy1,(dummy(j,i_md), j=1,ncv),(cv(j,i_md) ,j=1,ncv)
 !   WRITE(*,*)dummy1,(dummy(j,i_md), j=1,ncv),(cv(j,i_md) ,j=1,ncv)
    WRITE(14,101)dummy1,(cv(j,i_md) ,j=1,ncv)
 END DO
+ENDIF
   DO i = 1,ncv 
    nbin(i) = NINT((gridmax(i)-gridmin(i))/griddif(i)) + 1
   ENDDO
@@ -211,7 +214,7 @@ WRITE(*,'(A85)')'===============================================================
 t(1:j) = t_cv(1:j) !; PRINT*,t(1:j)    !# t_cv TASS CV INDEX
 n1 = nbin(1) ;n2 = nbin(2) ;n3 = nbin(3) ;n4 = nbin(4) 
 IF (pmf) THEN
-  CALL mean_force(u,ncv,nr,kt,gridmin,gridmax,griddif,nbin,t_min,t_max,pcons,fes)
+  CALL mean_force(max_step,u,ncv,nr,kt,gridmin,gridmax,griddif,nbin,t_min,t_max,pcons,fes)
   IF(spline) CALL bspline(nr,gridmin,gridmax,pcons,fes)
 STOP
 ELSE
