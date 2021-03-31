@@ -62,9 +62,8 @@ To compute multidimensional probabilities :: run_prob.sh
 ./run_prob.sh
 ```
 
-```AUTHOUR
+#AUTHOUR
 # RAHUL VERMA
 # DEPARTMENT OF CHEMISTRY
 # IIT KANPUR, INDIA
 # Email : vrahul@iitk.ac.in
-```
